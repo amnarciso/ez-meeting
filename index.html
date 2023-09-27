@@ -33,18 +33,33 @@
       body.busy .fullscreen-btn {
         border-color: rgb(182, 0, 0);
       }
+
+      #back-image {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-size: auto 100%;
+        background-position: left top;
+        background-repeat: no-repeat;
+        mix-blend-mode: multiply;
+        z-index: -1;
+        opacity: 0.2;
+        backdrop-filter: brightness(200%);
+      }
+
     </style>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js" integrity="sha512-42PE0rd+wZ2hNXftlM78BSehIGzezNeQuzihiBCvUEB3CVxHvsShF86wBWwQORNxNINlBPuq7rG4WWhNiTVHFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link href=https://fonts.googleapis.com/css?family=Orbitron rel=stylesheet type=text/css>
   </heaad>
-  <body class="">
+  <body>
+    <div id="back-image"></div>
     <table style="width: 100%; height: 100%; padding: 5vh">
       <tr>
         <td style="width: 50%;">
           <table style="width: 100%; height: 100%;">
-            <tr style="height: 20%">
-              <td id="roomName" style="font-size: 9vh">
+            <tr style="height: 20%; background-color: rgba(0, 0, 0, 0.3);">
+              <td id="roomName" style="font-size: 9vh; padding: 20px; overflow: hidden;">
               </td>
             </tr>
             <tr style="height: 20%">
@@ -65,12 +80,12 @@
         </td>
         <td>
           <table style="width: 100%; height: 100%">
-            <tr style="height: 30%; text-align: center; font-size: 15vh">
+            <tr style="height: 20%; text-align: center; font-size: 15vh">
               <td id="time" class="clock">
               </td>
             </tr>
-            <tr style="height: 70%">
-              <td id="nextEvents" style="width: 50%; vertical-align: top; padding: 2rem; background-color: rgba(255, 255, 255, 0.8); color: rgb(78, 78, 78);">
+            <tr style="height: 80%">
+              <td id="nextEvents" style="width: 50%; vertical-align: top; padding: 2rem; background-color: rgba(255, 255, 255, 0.8); color: rgb(78, 78, 78); border-radius: 20px;">
               </td>
             </tr>
           </table>
@@ -89,6 +104,8 @@
     $(function(){
       refreshData();
       setInterval(refreshData, 60000);
+      const backImag = getUrlVars()['img'];
+      $("#back-image").css("background-image", `url('${backImag}')`);
     });
 
     function refreshData() {
