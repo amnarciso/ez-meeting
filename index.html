@@ -184,7 +184,7 @@
             <tr>
               <td class="panel" style="width: 50%;">
                 <div class="panel-header">
-                  <span class="bold">Próximos eventos</span>
+                  <span class="bold">Pr&oacute;ximos eventos</span>
                   <span id="date" class="card"></span>
                 </div>
                 <div id="nextEvents">  </div>
@@ -213,20 +213,21 @@
       const calendar = getUrlVars()['calendar'];
       const key = getUrlVars()['key'] ?? 'AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs';;
       const room = getUrlVars()['room'];
-      $("#roomName").html(room);
+
+      $("#roomName").html(room.replace(/_/g, ' '));
       $("#date").html(`Hoje - ${moment(new Date()).format('DD/MM/YY')}`);
 
       let url = `https://clients6.google.com/calendar/v3/calendars/${calendar}/events?calendarId=${calendar}&singleEvents=true&timeZone=America/Sao_Paulo&maxAttendees=1&maxResults=250&sanitizeHtml=true&timeMin=${moment(yesterday).format('YYYY-MM-DD')}T00:00:00-03:00&timeMax=${moment(tomorrow).format('YYYY-MM-DD')}T23:59:00-03:00&key=${key}`;
       $.get(url, function(data, status){
         $("#eventTime").html('');
-        $("#eventTitle").html('Disponível');
+        $("#eventTitle").html('Dispon&iacute;vel');
         $("#eventGuests").html('');
         $('body').removeClass('busy');
 
         const events = data.items;
         events.sort(function(a,b){return Date.parse(a.start.dateTime) - Date.parse(b.start.dateTime)});
         const now = new Date();
-        $("#eventTime").html(`até ${moment(Date.parse(events[0].start.dateTime)).format('HH:mm')}`);
+        $("#eventTime").html(`at&eacute; ${moment(Date.parse(events[0].start.dateTime)).format('HH:mm')}`);
 
 
         let nextEvents = '';
@@ -237,7 +238,7 @@
           if (Date.parse(event.start.dateTime) > now) {
             const start = moment(Date.parse(event.start.dateTime)).format('HH:mm');
             const end = moment(Date.parse(event.end.dateTime)).format('HH:mm');
-            nextEvents += `<div class='card'><div class="eventItemTitle">${event.summary}</div><div class="eventItemTime"><span class="material-icons">access_time_filled</span> ${start} até ${end}</div></div>`;
+            nextEvents += `<div class='card'><div class="eventItemTitle">${event.summary}</div><div class="eventItemTime"><span class="material-icons">access_time_filled</span> ${start} at&eacute; ${end}</div></div>`;
           }
 
           if ((Date.parse(event.start.dateTime) < Date.parse(now)) && (Date.parse(event.end.dateTime) > Date.parse(now))) {
@@ -247,7 +248,7 @@
             const guestName = event.organizer.email.split('@')[0].split('.').map((name) => name.charAt(0).toUpperCase() + name.slice(1)).join(' ');
             $("#eventGuestName").html(guestName);
 
-            $("#eventTime").html(`${start} até ${end}`);
+            $("#eventTime").html(`${start} at&eacute; ${end}`);
             $("#eventTitle").html(event.summary);
             $("#eventGuests").html(event.organizer.displayName ?? event.organizer.email);
             $('body').addClass('busy');
