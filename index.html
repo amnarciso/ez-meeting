@@ -1,0 +1,190 @@
+<html>
+  <heaad>
+    <style>
+      body {
+        background-color: green;
+        color: white;
+      }
+      body.busy {
+        background-color: rgb(182, 0, 0);
+      }
+      table {
+        font-size: 4vh;
+      }
+      .clock {
+        font-family: Orbitron, sans-serif;
+      }
+      body::backdrop {
+        background-color: green;
+      }
+      body.busy::backdrop {
+        background-color: rgb(182, 0, 0);
+      }
+      .fullscreen-btn:fullscreen {
+        display: none;
+      }
+      .fullscreen-btn {
+        margin: -2px;
+        padding: 1vh;
+        border-radius: 20% / 40%;
+        border: 3px solid green;
+        cursor: pointer;
+      }
+      body.busy .fullscreen-btn {
+        border-color: rgb(182, 0, 0);
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js" integrity="sha512-42PE0rd+wZ2hNXftlM78BSehIGzezNeQuzihiBCvUEB3CVxHvsShF86wBWwQORNxNINlBPuq7rG4WWhNiTVHFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href=https://fonts.googleapis.com/css?family=Orbitron rel=stylesheet type=text/css>
+  </heaad>
+  <body class="">
+    <table style="width: 100%; height: 100%; padding: 5vh">
+      <tr>
+        <td style="width: 50%;">
+          <table style="width: 100%; height: 100%;">
+            <tr style="height: 20%">
+              <td id="roomName" style="font-size: 9vh">
+              </td>
+            </tr>
+            <tr style="height: 20%">
+              <td id="eventTime">
+              </td>
+            </tr>
+            <tr style="height: 20%; text-align: center; font-size: 8vh">
+              <td id="eventTitle">
+              </td>
+            </tr>
+            <tr style="height: 40%; vertical-align: top;">
+              <td>
+                <div id="eventGuests" style="overflow: hidden; max-height: 40vh">
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table style="width: 100%; height: 100%">
+            <tr style="height: 30%; text-align: center; font-size: 15vh">
+              <td id="time" class="clock">
+              </td>
+            </tr>
+            <tr style="height: 70%">
+              <td id="nextEvents" style="width: 50%; vertical-align: top; padding: 2rem; background-color: rgba(255, 255, 255, 0.8); color: rgb(78, 78, 78);">
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <div style="position: absolute; top: 0; right:0; padding: 3vh;" onClick="$('body')[0].requestFullscreen();">
+      <div style="border: 1px solid white">
+        <div class="fullscreen-btn">
+          fullscreen
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript">
+    $(function(){
+      refreshData();
+      setInterval(refreshData, 60000);
+    });
+
+    function refreshData() {
+      const yesterday = (new Date()).setDate((new Date()).getDate() -1);
+      const tomorrow = (new Date()).setDate((new Date()).getDate() +1);
+      const calendar = getUrlVars()['calendar'];
+      const key = getUrlVars()['key'] ?? 'AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs';;
+      const room = getUrlVars()['room'];
+      $("#roomName").html(room);
+
+      let url = `https://clients6.google.com/calendar/v3/calendars/${calendar}/events?calendarId=${calendar}&singleEvents=true&timeZone=America/Sao_Paulo&maxAttendees=1&maxResults=250&sanitizeHtml=true&timeMin=${moment(yesterday).format('YYYY-MM-DD')}T00:00:00-03:00&timeMax=${moment(tomorrow).format('YYYY-MM-DD')}T23:59:00-03:00&key=${key}`;
+      $.get(url, function(data, status){
+        $("#eventTime").html('');
+        $("#eventTitle").html('Livre');
+        $("#eventGuests").html('');
+        $('body').removeClass('busy');
+
+        const events = data.items;
+        events.sort(function(a,b){return Date.parse(a.start.dateTime) - Date.parse(b.start.dateTime)});
+        const now = new Date();
+
+        let nextEvents = 'Proximos:<hr>';
+        for(event of events) {
+          if (moment(Date.parse(event.start.dateTime)).format('YYMMDD') !== moment(new Date()).format('YYMMDD'))
+            continue;
+
+          if (Date.parse(event.start.dateTime) > now) {
+            const start = moment(Date.parse(event.start.dateTime)).format('HH:mm');
+            const end = moment(Date.parse(event.end.dateTime)).format('HH:mm');
+            nextEvents += `${start}-${end}: ${event.summary}<br>`;
+          }
+
+          if ((Date.parse(event.start.dateTime) < Date.parse(now)) && (Date.parse(event.end.dateTime) > Date.parse(now))) {
+            const start = moment(Date.parse(event.start.dateTime)).format('HH:mm');
+            const end = moment(Date.parse(event.end.dateTime)).format('HH:mm');
+
+            $("#eventTime").html(`${start}-${end}`);
+            $("#eventTitle").html(event.summary);
+            $("#eventGuests").html(event.organizer.displayName ?? event.organizer.email);
+            $('body').addClass('busy');
+          }
+        }
+        $("#nextEvents").html(nextEvents);
+        $("#time").html(moment(new Date()).format('HH:mm'));
+      });
+      $('body')[0].requestFullscreen();
+    }
+
+    function getUrlVars()
+    {
+      var vars = [], hash;
+      var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+      for(var i = 0; i < hashes.length; i++)
+      {
+          hash = hashes[i].split('=');
+          vars.push(hash[0]);
+          vars[hash[0]] = decodeURI(hash[1]);
+      }
+      return vars;
+    }
+  </script>
+
+  <script type="text/javascript">
+    // Create the root video element
+    var video = document.createElement('video');
+    video.setAttribute('loop', '');
+    // Add some styles if needed
+    video.setAttribute('style', 'position: fixed;');
+    
+    // A helper to add sources to video
+    function addSourceToVideo(element, type, dataURI) {
+        var source = document.createElement('source');
+        source.src = dataURI;
+        source.type = 'video/' + type;
+        element.appendChild(source);
+    }
+    
+    // A helper to concat base64
+    var base64 = function(mimeType, base64) {
+        return 'data:' + mimeType + ';base64,' + base64;
+    };
+    
+    // Add Fake sourced
+    addSourceToVideo(video,'webm', base64('video/webm', 'GkXfo0AgQoaBAUL3gQFC8oEEQvOBCEKCQAR3ZWJtQoeBAkKFgQIYU4BnQI0VSalmQCgq17FAAw9CQE2AQAZ3aGFtbXlXQUAGd2hhbW15RIlACECPQAAAAAAAFlSua0AxrkAu14EBY8WBAZyBACK1nEADdW5khkAFVl9WUDglhohAA1ZQOIOBAeBABrCBCLqBCB9DtnVAIueBAKNAHIEAAIAwAQCdASoIAAgAAUAmJaQAA3AA/vz0AAA='));
+    addSourceToVideo(video, 'mp4', base64('video/mp4', 'AAAAHGZ0eXBpc29tAAACAGlzb21pc28ybXA0MQAAAAhmcmVlAAAAG21kYXQAAAGzABAHAAABthADAowdbb9/AAAC6W1vb3YAAABsbXZoZAAAAAB8JbCAfCWwgAAAA+gAAAAAAAEAAAEAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAIVdHJhawAAAFx0a2hkAAAAD3wlsIB8JbCAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAIAAAACAAAAAABsW1kaWEAAAAgbWRoZAAAAAB8JbCAfCWwgAAAA+gAAAAAVcQAAAAAAC1oZGxyAAAAAAAAAAB2aWRlAAAAAAAAAAAAAAAAVmlkZW9IYW5kbGVyAAAAAVxtaW5mAAAAFHZtaGQAAAABAAAAAAAAAAAAAAAkZGluZgAAABxkcmVmAAAAAAAAAAEAAAAMdXJsIAAAAAEAAAEcc3RibAAAALhzdHNkAAAAAAAAAAEAAACobXA0dgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAIAAgASAAAAEgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABj//wAAAFJlc2RzAAAAAANEAAEABDwgEQAAAAADDUAAAAAABS0AAAGwAQAAAbWJEwAAAQAAAAEgAMSNiB9FAEQBFGMAAAGyTGF2YzUyLjg3LjQGAQIAAAAYc3R0cwAAAAAAAAABAAAAAQAAAAAAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAEAAAABAAAAFHN0c3oAAAAAAAAAEwAAAAEAAAAUc3RjbwAAAAAAAAABAAAALAAAAGB1ZHRhAAAAWG1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAG1kaXJhcHBsAAAAAAAAAAAAAAAAK2lsc3QAAAAjqXRvbwAAABtkYXRhAAAAAQAAAABMYXZmNTIuNzguMw=='));
+    
+    // Append the video to where ever you need
+    document.body.appendChild(video);
+    
+    // Start playing video after any user interaction.
+    // NOTE: Running video.play() handler without a user action may be blocked by browser.
+    var playFn = function() {
+        video.play();
+        document.body.removeEventListener('touchend', playFn);
+    };
+    document.body.addEventListener('touchend', playFn);    
+  </script>
+
+</html>
