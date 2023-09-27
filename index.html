@@ -4,6 +4,7 @@
       body {
         background-color: green;
         color: white;
+        margin: 0;
       }
       body.busy {
         background-color: rgb(182, 0, 0);
@@ -44,7 +45,6 @@
         mix-blend-mode: multiply;
         z-index: -1;
         opacity: 0.2;
-        backdrop-filter: brightness(200%);
       }
 
     </style>
@@ -55,13 +55,15 @@
   <body>
     <div id="back-image"></div>
     <table style="width: 100%; height: 100%; padding: 5vh">
-      <tr>
+      <tr style="height: 20%;">
+        <td id="roomName" style="font-size: 9vh; padding: 20px; overflow: hidden; width: 50%; background-color: rgba(0, 0, 0, 0.3);">
+        </td>
+        <td id="time" class="clock" style="width: 50%;  text-align: center; font-size: 15vh;">
+        </td>
+      </tr>
+      <tr style="height: 80%">
         <td style="width: 50%;">
           <table style="width: 100%; height: 100%;">
-            <tr style="height: 20%; background-color: rgba(0, 0, 0, 0.3);">
-              <td id="roomName" style="font-size: 9vh; padding: 20px; overflow: hidden;">
-              </td>
-            </tr>
             <tr style="height: 20%">
               <td id="eventTime">
               </td>
@@ -78,12 +80,8 @@
             </tr>
           </table>
         </td>
-        <td>
+        <td style="width: 50%;">
           <table style="width: 100%; height: 100%">
-            <tr style="height: 20%; text-align: center; font-size: 15vh">
-              <td id="time" class="clock">
-              </td>
-            </tr>
             <tr style="height: 80%">
               <td id="nextEvents" style="width: 50%; vertical-align: top; padding: 2rem; background-color: rgba(255, 255, 255, 0.8); color: rgb(78, 78, 78); border-radius: 20px;">
               </td>
@@ -104,8 +102,9 @@
     $(function(){
       refreshData();
       setInterval(refreshData, 60000);
-      const backImag = getUrlVars()['img'];
-      $("#back-image").css("background-image", `url('${backImag}')`);
+      const backImag = getUrlVars()['img'] ?? null;
+      if (backImag)
+        $("#back-image").css("background-image", `url('${backImag}')`);
     });
 
     function refreshData() {
