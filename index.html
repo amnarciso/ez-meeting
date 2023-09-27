@@ -104,7 +104,7 @@
       setInterval(refreshData, 60000);
       const backImag = getUrlVars()['img'] ?? null;
       if (backImag)
-        $("#back-image").css("background-image", `url('${backImag}')`);
+        $("#back-image").css("background-image", `url('${decodeURIComponent(backImag)}')`);
     });
 
     function refreshData() {
