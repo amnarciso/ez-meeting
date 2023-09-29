@@ -15,6 +15,7 @@ To use this project, follow these steps:
    - `room`: Name of the meeting room.
    - `calendar`: ID of the Google Calendar associated with the meeting room.
    - `key` (Optional): If the room's calendar is not public, provide the `google_access_key`. If the calendar is public, you can omit this parameter.
+   - `img` (Optional): You can include an image link to be displayed in grayscale with 20% transparency, aligned to the left of the background.
 
 3. The HTML file will display the current status of the meeting room, indicating whether it is free or occupied. It will also show the details of the next few reservations scheduled for the room.
 
@@ -45,5 +46,6 @@ This project is open-source and available under the [MIT License](LICENSE).
 ## Contributors
 
 - amnarciso
+- tiago.miranda
 
 Feel free to contribute to this project or report issues if you encounter any problems. We welcome your feedback and suggestions for improvement.
