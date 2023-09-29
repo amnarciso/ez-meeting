@@ -2,16 +2,19 @@
   <heaad>
     <style>
       :root {
-        --free-back: #d2fde2;
+        --free-back: #198038;
         --free-line: #9edfb9;
 
-        --busy-back:  #ffeaec;
-        --busy-line:  #ffb6bc;
+        --busy-back:  #DA1E28;
+        --busy-line:  #FFA4A9;
 
-        --text-color:  ##242A2E;
+        --text-color:  #FFFFFF;
+
+        --panel-background: #FFFFFF;
+        --panel-color: #242A2E;
 
         --card-background: #F6F7F8;
-        --card-color: #697077;
+        --card-color: #50565B;
       }
 
       body {
@@ -62,16 +65,40 @@
         font-weight: 700;
       }
 
+      .container {
+        height: 100%;
+        width: 100%;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        padding: 5.5vh;
+      }
+
+      .row {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        width: 100%;
+      }
+
+      .col {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+      }
+
       .panel {
         vertical-align: top;
         padding: 4vh;
-        background-color: white;
+        background-color: var(--panel-background);
+        color: var(--panel-color);
         border-radius: 2vh;
       }
 
       .panel-header {
         font-size: 3.5vh;
-        margin-bottom: 2vh;
+        margin-bottom: 4vh;
       }
 
       .card {
@@ -104,7 +131,11 @@
       #roomName {
         border-bottom-width: 4px;
         border-bottom-style: solid;
-        font-size: 8vh;
+        font-size: 10vh;
+        font-weight: 900;
+        height: 100%;
+        display: flex;
+        align-items: center;
       }
 
       #eventGuestName {
@@ -112,13 +143,14 @@
       }
 
       #eventTitle {
-        font-size: 5vh;
+        font-size: 7vh;
+        font-weight: 800;
         word-wrap: break-word;
         margin-bottom: 2vh;
       }
 
       .eventLine {
-        font-size: 3vh;
+        font-size: 4vh;
         vertical-align: middle;
         margin-bottom: 1rem;
       }
@@ -126,21 +158,22 @@
       .material-icons {
         vertical-align: middle;
         padding-bottom: 0.4vh;
+        padding-right: 1vh;
       }
 
       #date {
-        font-size: 2.5vh;
-        font-family: 'Poppins';
-        font-weight: 500;
+        font-size: 3vh;
         float: right;
+        color: var(--panel-color);
       }
 
       .eventItemTitle {
-        font-size: 2.5vh;
+        font-size: 3vh;
+        color: var(--panel-color);
       }
 
       .eventItemTime {
-        font-size: 2vh;
+        font-size: 3vh;
       }
 
     </style>
@@ -151,20 +184,20 @@
   </heaad>
   <body>
     <div id="back-image"></div>
-    <table style="width: 100%; height: 100%; padding: 5vh">
-      <tr>
-        <td style="width: 50%;">
-          <table style="width: 100%; height: 100%;">
-            <tr style="height: 5%;">
-              <td id="time" class="bold">
-              </td>
-            </tr>
-            <tr style="height: 20%">
-              <td id="roomName" class="bold">
-              </td>
-            </tr>
-            <tr style="height: 75%">
-              <td class="detail">
+    <div class="container">
+      <div class="row">
+        <div style="width: 50%">
+          <div class="col">
+            <div style="height: 5%">
+              <div id="time" class="bold">
+              </div>
+            </div>
+            <div style="height: 20%">
+              <div id="roomName" class="bold">
+              </div>
+            </div>
+            <div style="height: 5%">
+              <div class="detail">
                 <div id="eventGuestName"></div>
                 <div id="eventTitle"></div>
                 <div class="eventLine">
@@ -175,11 +208,11 @@
                   <span class="material-icons">email</span>
                   <span id="eventGuests"></span>
                 </div>
-              </td>
-            </tr>
-          </table>
-        </td>
-        <td style="width: 50%">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="width: 50%">
           <table style="width: 100%; height: 100%">
             <tr style="height:5%"></tr>
             <tr>
@@ -192,15 +225,16 @@
               </td>
             </tr>
           </table>
-        </td>
-      </tr>
-    </table>
+        </div>
+      </div>
+    </div>
     <div class="fullscreen" onClick="$('body')[0].requestFullscreen();">
       <span class="material-icons">fullscreen</span>
     </div>
   </body>
   <script type="text/javascript">
     $(function(){
+      setTimeout(function() { location.reload() }, 3600000);
       refreshData();
       setInterval(refreshData, 60000);
       const backImag = getUrlVars()['img'];
