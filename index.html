@@ -2,39 +2,40 @@
   <heaad>
     <style>
       :root {
-        --free-light: #d2fde2;
-        --free-dark: #9edfb9;
+        --free-back: #d2fde2;
+        --free-line: #9edfb9;
 
-        --busy-light:  #ffeaec;
-        --busy-dark:  #ffb6bc;
+        --busy-back:  #ffeaec;
+        --busy-line:  #ffb6bc;
 
         --text-color:  ##242A2E;
+
         --card-background: #F6F7F8;
         --card-color: #697077;
       }
 
       body {
-        background-color: var(--free-light);
+        background-color: var(--free-back);
         color: var(--text-color);
         font-family: 'Red Hat Display';
         font-weight: 500;
         margin: 0;
       }
       body.busy {
-        background-color: var(--busy-light);
+        background-color: var(--busy-back);
       }
       body::backdrop {
-        background-color: var(--free-light);
+        background-color: var(--free-back);
       }
       body.busy::backdrop {
-        background-color: var(--busy-light);
+        background-color: var(--busy-back);
       }
 
       body #roomName {
-        border-color: var(--free-dark);
+        border-color: var(--free-line);
       }
       body.busy #roomName {
-        border-color: var(--busy-dark);
+        border-color: var(--busy-line);
       }
 
       body .hideFree {
