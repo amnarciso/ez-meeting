@@ -257,7 +257,7 @@
         $("#eventGuests").html('');
         $('body').removeClass('busy');
 
-        const events = data.items;
+        let events = data.items.filter(function(event){return Date.parse(event.end.dateTime) > Date.parse(new Date())});
         events.sort(function(a,b){return Date.parse(a.start.dateTime) - Date.parse(b.start.dateTime)});
         const now = new Date();
         $("#eventTime").html(`at&eacute; ${moment(Date.parse(events[0].start.dateTime)).format('HH:mm')}`);
